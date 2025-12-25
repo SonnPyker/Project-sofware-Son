@@ -1,5 +1,6 @@
 package com.quanlytodanpho.service;
 
+import com.quanlytodanpho.constant.NotificationConstants;
 import com.quanlytodanpho.dto.DangKySuKienDTO;
 import com.quanlytodanpho.entity.DangKySuKien;
 import com.quanlytodanpho.entity.NguoiDan;
@@ -135,10 +136,10 @@ public class DangKySuKienService {
             try {
                 suKienRepository.findById(dangKy.getMaSuKien()).ifPresent(suKien -> {
                     thongBaoService.createPersonalNotification(
-                        "Hủy đăng ký sự kiện",
-                        "Bạn đã bị xóa khỏi sự kiện: " + suKien.getTenSuKien(),
+                        NotificationConstants.TITLE_EVENT_REGISTRATION_CANCELLED,
+                        String.format(NotificationConstants.CONTENT_EVENT_REGISTRATION_CANCELLED, suKien.getTenSuKien()),
                         dangKy.getCccdNguoiDangKy(),
-                        "Bình thường"
+                        NotificationConstants.URGENCY_NORMAL
                     );
                 });
             } catch (Exception e) {

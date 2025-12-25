@@ -1,5 +1,6 @@
 package com.quanlytodanpho.service;
 
+import com.quanlytodanpho.constant.NotificationConstants;
 import com.quanlytodanpho.entity.DangKySuKien;
 import com.quanlytodanpho.entity.SuKien;
 import com.quanlytodanpho.repository.DangKySuKienRepository;
@@ -39,15 +40,15 @@ public class NotificationScheduler {
                 if (!"Đã đăng ký".equals(p.getTrangThai())) continue;
                 
                 // Check if reminder already sent
-                boolean sent = thongBaoRepository.hasSentReminder(p.getCccdNguoiDangKy(), event.getMaSuKien(), "Nhắc nhở sự kiện");
+                boolean sent = thongBaoRepository.hasSentReminder(p.getCccdNguoiDangKy(), event.getMaSuKien(), NotificationConstants.TITLE_EVENT_REMINDER);
                 
                 if (!sent) {
                     try {
                         thongBaoService.createPersonalNotification(
-                            "Nhắc nhở sự kiện: " + event.getTenSuKien(),
-                            "Sự kiện " + event.getTenSuKien() + " sẽ diễn ra vào " + event.getThoiGianBatDau() + ". Vui lòng đến đúng giờ.",
+                            NotificationConstants.TITLE_EVENT_REMINDER + ": " + event.getTenSuKien(),
+                            String.format(NotificationConstants.CONTENT_EVENT_REMINDER, event.getTenSuKien(), event.getThoiGianBatDau()),
                             p.getCccdNguoiDangKy(),
-                            "Bình thường"
+                            NotificationConstants.URGENCY_NORMAL
                         );
                     } catch (Exception e) {
                         System.err.println("Failed to send reminder for event " + event.getMaSuKien() + " to user " + p.getCccdNguoiDangKy());
