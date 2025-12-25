@@ -25,6 +25,7 @@ public class DangKySuKienService {
     private final SuKienRepository suKienRepository;
     private final NguoiDanRepository nguoiDanRepository;
     private final AuthService authService;
+    private final ThongBaoService thongBaoService;
     
     @Transactional
     public DangKySuKienDTO registerForEvent(Integer maSuKien, String ghiChu) {
@@ -128,6 +129,22 @@ public class DangKySuKienService {
         
         dangKy.setTrangThai("Hủy đăng ký");
         dangKySuKienRepository.save(dangKy);
+        
+        // Notify if admin removed user
+        if (isAdmin && !isOwner) {
+            try {
+                suKienRepository.findById(dangKy.getMaSuKien()).ifPresent(suKien -> {
+                    thongBaoService.createPersonalNotification(
+                        "Hủy đăng ký sự kiện",
+                        "Bạn đã bị xóa khỏi sự kiện: " + suKien.getTenSuKien(),
+                        dangKy.getCccdNguoiDangKy(),
+                        "Bình thường"
+                    );
+                });
+            } catch (Exception e) {
+                System.err.println("Failed to send notification: " + e.getMessage());
+            }
+        }
     }
 
     @Transactional

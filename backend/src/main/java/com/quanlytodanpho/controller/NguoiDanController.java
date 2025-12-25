@@ -99,12 +99,22 @@ public class NguoiDanController {
 
         // Send notification
         try {
-            thongBaoService.createNotification(
+            thongBaoService.createPersonalNotification(
                 "Cập nhật thông tin cá nhân",
                 "Thông tin cá nhân của bạn (CCCD: " + cccd + ") đã được cập nhật bởi quản trị viên.",
-                null,
+                cccd,
                 "Bình thường"
             );
+            
+            // Check if added to family
+            if (newMaGiaDinh != null && !newMaGiaDinh.equals(oldMaGiaDinh)) {
+                 thongBaoService.createPersonalNotification(
+                    "Đã được thêm vào hộ gia đình",
+                    "Bạn đã được thêm vào hộ gia đình mã số: " + newMaGiaDinh,
+                    cccd,
+                    "Bình thường"
+                );
+            }
         } catch (Exception e) {
             // Log error but don't fail the request
             System.err.println("Failed to send notification: " + e.getMessage());
